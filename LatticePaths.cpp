@@ -5,14 +5,28 @@
 #include <algorithm>
 using namespace std;
 
-void findPaths (int m, int n, int col, int row, int &sum) {
-    if (col == n && row == m)
-        sum++;
-    if (col < n) 
-        findPaths (m, n, col + 1, row, sum);
-   
-    if (row < m)
-        findPaths (m, n, col, row + 1, sum);
+
+
+
+int findPaths_helper (int * paths, int rows, int cols)
+{
+    int down_paths, right_paths;
+    if (paths[rows-1][cols] != 0)
+        right_paths = paths[rows-1][cols];
+    else
+        findPaths_helper (paths, rows - 1, cols);
+    if (paths[rows][cols-1] != 0)
+        down_paths = paths[rows][cols-1];
+    else
+        findPaths_helper (paths, rows, cols - 1);
+    return down_paths + right_paths;
+
+}
+void findPaths (int rows, int cols) {
+  int paths [500][500];
+  paths[0][1] = 1;
+  paths[1][0] = 1;
+  findPaths_helper (paths, rows, cols);
 }
 
 int main() {
@@ -23,8 +37,7 @@ int main() {
         sum = 0;
    		cin >> n;
    		cin >> m;
-        findPaths (n, m, 0, 0, sum);
-   		cout << sum << endl;
+      cout << findPaths (n, m) << endl;
    	}
 
     return 0;
