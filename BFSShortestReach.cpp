@@ -11,7 +11,7 @@ int *BFSShortestReach (int start_node, queue<int> *adjacentNodes, int nodes)
 	int *distances= new int [nodes];
 	bool visited[nodes];
 	for (int i = 0; i < nodes; i++) {
-		distances[i] = -1;
+		distances[i] = 6001;
 		visited[i] = false;
 	}
 	queue<int> q;
@@ -27,7 +27,9 @@ int *BFSShortestReach (int start_node, queue<int> *adjacentNodes, int nodes)
 			adjacentNodes[cur-1].pop(); //pop each adjacent node off the queue
             if (visited[cur_adjacent-1] != true) {
                  visited[cur-1] = true;
-			     distances[cur_adjacent-1] = distances[cur-1] + 6; //dist from cur node is dist from prev node + 6
+                 int new_dist = distances[cur-1] + 6; //dist from cur node along this path is dist from prev node + 6 
+                if (distances[cur_adjacent - 1] > new_dist)
+			     	distances[cur_adjacent-1] = new_dist; //if found new path with smaller dist, update
 			     q.push(cur_adjacent); //enqueue each node for later traversal   
             }
 		}
@@ -58,8 +60,12 @@ int main()
     	cin >> start;
     	int * distances = BFSShortestReach (start, adjacentNodes, nodes);
     	for (int j = 0; j < nodes; j++) {
-            if (j != start-1)
-    	      cout << distances[j] << " ";
+            if (j != start-1) {
+                if (distances[j] == 6001)
+                    cout << -1 << " ";
+                else
+    	            cout << distances[j] << " ";
+            }
         }
     	cout << endl;
     }
