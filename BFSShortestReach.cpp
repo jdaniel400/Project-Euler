@@ -1,36 +1,43 @@
 #include <cmath>
 #include <cstdio>
 #include <vector>
+#include <queue>
 #include <iostream>
 #include <algorithm>
 using namespace std;
-int prev;
-int *BFSShortestReach (int start_node, int *distances, int nodes)
+
+int *BFSShortestReach (int start_node, queue<int> *adjacentNodes, int nodes)
 {
-	int distances[nodes];
+	int *distances= new int [nodes];
 	bool visited[nodes];
-	for (int i = 0; i < nodes; nodes++) {
+	for (int i = 0; i < nodes; i++) {
 		distances[i] = -1;
 		visited[i] = false;
 	}
-	queue q;
-	q.enqueue(start_node);
-	distances[start_node] = 0;
+	queue<int> q;
+	q.push(start_node);
+    visited[start_node-1] = true;
+	distances[start_node-1] = 0;
 	while (!q.empty()) {
-		int cur = queue.front();
-		q.pop_front();
-		while (!adjacentNodes[cur].empty()) //loop through all adjacent nodes {
-			int cur_adjacent = adjacentNodes.front(); 
-			adjacentNodes[cur].pop_front(); //pop each adjacent node off the queue
-			distances[cur_adjacent] = distances[cur] + 6; //dist from cur node is dist from prev node + 6
-			q.enqueue(cur_adjacent); //enqueue each node for later traversal
+		int cur = q.front();
+		q.pop();
+		while (!adjacentNodes[cur-1].empty())
+		{
+			int cur_adjacent = adjacentNodes[cur-1].front(); 
+			adjacentNodes[cur-1].pop(); //pop each adjacent node off the queue
+            if (visited[cur_adjacent-1] != true) {
+                 visited[cur-1] = true;
+			     distances[cur_adjacent-1] = distances[cur-1] + 6; //dist from cur node is dist from prev node + 6
+			     q.push(cur_adjacent); //enqueue each node for later traversal   
+            }
 		}
 	}
 
 	return distances;
-
 }
-int main() {
+
+int main()
+ {
     /* Enter your code here. Read input from STDIN. Print output to STDOUT */ 
     int d;
     cin >> d;
@@ -39,17 +46,22 @@ int main() {
     	cin >> nodes;
     	int edges;
     	cin >> edges;
-    	int adjancentNodes [nodes]; //build an adjacency list for each node
+    	queue<int> adjacentNodes [nodes]; //build an adjacency list for each node
     	for (int j = 0; j < edges; j++) {
     		int one, two;
     		cin >> one; //get the two nodes that will share the common edge
     		cin >> two;
-    		adjancentNodes[two].push_back(one); //add one to two's adjacency list
-    		adjancentNodes[one].push_back(two); //add two to one's adjacency list
+    		adjacentNodes[two-1].push(one); //add one to two's adjacency list
+    		adjacentNodes[one-1].push(two); //add two to one's adjacency list
     	}
     	int start;
     	cin >> start;
-    	int * distances = BFSShortestReach (start, nodes);
+    	int * distances = BFSShortestReach (start, adjacentNodes, nodes);
+    	for (int j = 0; j < nodes; j++) {
+            if (j != start-1)
+    	      cout << distances[j] << " ";
+        }
+    	cout << endl;
     }
     return 0;
 }
